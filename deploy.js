@@ -5,7 +5,16 @@ async function main() {
   // here we connect to our ganache rpc url
   const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
   // get private key from our first ganache account
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+  // const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+  /*
+    here we use the encrypted key way that ehters allows us to do 
+  */
+  const encryptedJson = fs.readFileSync("./.encryptKey.json", "utf8");
+  let wallet = new ethers.Wallet.fromEncryptedJsonSync(
+    encryptedJson,
+    process.env.PRIVATE_KEY_PASSWORD
+  );
+  wallet = await wallet.connect(provider);
   // grab our abi from our contract
   const abi = fs.readFileSync("./SimpleStorage_sol_SimpleStorage.abi", "utf-8");
   // grab our bytecode from our contract
